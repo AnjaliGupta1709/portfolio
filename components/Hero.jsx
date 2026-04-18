@@ -39,7 +39,7 @@ export default function Hero() {
 
           <div className="flex pt-4">
             <a
-              href="/resume.pdf"
+              href="/Anjali Gupta Resume.pdf"
               target="_blank"
               className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-orange-500 to-amber-500 text-white font-semibold rounded-lg hover:opacity-90 transition-all duration-300 shadow-lg hover:scale-105"
             >

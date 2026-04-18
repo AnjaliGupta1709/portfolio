@@ -1,117 +1,103 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { Menu, X, Sun, Moon } from 'lucide-react'
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
   const [dark, setDark] = useState(true)
+  const [active, setActive] = useState(0)
 
-  // 🔥 initial theme set
+  const navRefs = useRef([])
+  const containerRef = useRef(null)
+
+  const [style, setStyle] = useState({
+    width: 0,
+    left: 0,
+  })
+
   useEffect(() => {
     document.documentElement.classList.add('dark')
   }, [])
 
-  // 🔥 FIXED TOGGLE
-  const toggleTheme = () => {
-    if (dark) {
-      document.documentElement.classList.remove('dark')
-      document.documentElement.classList.add('light')
-    } else {
-      document.documentElement.classList.remove('light')
-      document.documentElement.classList.add('dark')
+  // 🔥 FIXED HIGHLIGHT SIZE (padding included)
+  useEffect(() => {
+    const current = navRefs.current[active]
+    const container = containerRef.current
+
+    if (current && container) {
+      const rect = current.getBoundingClientRect()
+      const parentRect = container.getBoundingClientRect()
+
+      setStyle({
+        width: rect.width + 16, // 🔥 थोड़ा extra padding
+        left: rect.left - parentRect.left - 8,
+      })
     }
+  }, [active])
+
+  const toggleTheme = () => {
+    document.documentElement.classList.toggle('dark')
     setDark(!dark)
   }
 
-  const navItems = [
-    { name: 'Home', href: '#home' },
-    { name: 'About', href: '#about' },
-    { name: 'Skills', href: '#skills' },
-    { name: 'Projects', href: '#projects' },
-    { name: 'Contact', href: '#contact' },
-  ]
+  const navItems = ['Home', 'About', 'Skills', 'Projects', 'Contact']
 
   return (
-    <nav className="fixed top-0 w-full bg-white dark:bg-black backdrop-blur-md border-b border-gray-200 dark:border-gray-800 z-50">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          
-          {/* Logo */}
-          <Link href="#" className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-amber-500 rounded-full flex items-center justify-center font-bold text-white">
-              AG
-            </div>
-            <span className="hidden sm:inline font-bold text-lg text-black dark:text-white">
-              Anjali
-            </span>
-          </Link>
+    <nav className="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-6xl">
 
-          {/* Desktop Menu */}
-          <div className="hidden md:flex gap-8">
-            {navItems.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className="text-sm text-black dark:text-white hover:text-orange-500 transition-colors duration-300"
-              >
-                {item.name}
-              </Link>
-            ))}
-          </div>
+      <div className="relative backdrop-blur-2xl bg-black/50 border border-white/10 rounded-full px-6 py-3 shadow-xl shadow-orange-500/10 flex items-center justify-between">
 
-          {/* Right Side */}
-          <div className="flex items-center gap-4">
-            
-            {/* 🌙 THEME TOGGLE */}
-            <button
-              onClick={toggleTheme}
-              className="p-2 rounded-lg border border-gray-300 dark:border-gray-700 text-black dark:text-white hover:scale-105 transition"
-            >
-              {dark ? <Sun size={18} /> : <Moon size={18} />}
-            </button>
-
-            {/* Contact Button */}
-            <Link
-              href="#contact"
-              className="hidden sm:inline px-4 py-2 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-lg hover:opacity-90 transition-opacity"
-            >
-              Contact Me
-            </Link>
-
-            {/* Mobile Menu Button */}
-            <button
-              className="md:hidden text-black dark:text-white"
-              onClick={() => setIsOpen(!isOpen)}
-            >
-              {isOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
-          </div>
+        {/* LOGO */}
+        <div className="w-11 h-11 rounded-full bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center text-black font-bold">
+          AG
         </div>
 
-        {/* Mobile Menu */}
-        {isOpen && (
-          <div className="md:hidden pb-4 border-t border-gray-200 dark:border-gray-800">
-            {navItems.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className="block px-4 py-2 text-black dark:text-white hover:text-orange-500 transition-colors"
-                onClick={() => setIsOpen(false)}
-              >
-                {item.name}
-              </Link>
-            ))}
+        {/* NAV */}
+        <div ref={containerRef} className="relative flex items-center gap-6">
+
+          {/* 🔥 FIXED HIGHLIGHT */}
+          <div
+            className="absolute top-1/2 -translate-y-1/2 h-10 bg-gradient-to-r from-orange-500 to-amber-500 rounded-full transition-all duration-300"
+            style={{
+              width: style.width,
+              left: style.left,
+            }}
+          ></div>
+
+          {navItems.map((item, index) => (
             <Link
-              href="#contact"
-              className="block mx-4 mt-4 px-4 py-2 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-lg text-center hover:opacity-90 transition-opacity"
-              onClick={() => setIsOpen(false)}
+              key={item}
+              href={`#${item.toLowerCase()}`}
+              ref={(el) => (navRefs.current[index] = el)}
+              onClick={() => setActive(index)}
+              className={`relative z-10 px-4 py-2 text-sm font-medium ${
+                active === index
+                  ? 'text-white'
+                  : 'text-gray-300 hover:text-orange-400'
+              }`}
             >
-              Contact Me
+              {item}
             </Link>
-          </div>
-        )}
+          ))}
+
+        </div>
+
+        {/* RIGHT */}
+        <div className="flex items-center gap-3">
+
+        
+         
+
+          <button
+            className="md:hidden text-white"
+            onClick={() => setIsOpen(!isOpen)}
+          >
+            {isOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+
+        </div>
       </div>
     </nav>
   )
