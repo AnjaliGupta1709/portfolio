@@ -63,17 +63,16 @@ export default function Hero() {
 
         {/* 🔥 BIGGER CARD */}
         <div className={`hidden lg:flex justify-center transition-all duration-1000 delay-300 ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}>
-          <div className="relative w-full max-w-lg">   {/* 🔥 bigger width */}
+          <div className="relative w-full max-w-lg">
             
             <div className="w-full h-[420px] bg-black rounded-3xl border border-gray-700 flex items-center justify-center overflow-hidden hover:border-orange-500/50 transition-all duration-300">
               
-              <svg viewBox="0 0 200 200" className="w-4/5 h-4/5 text-orange-500 animate-float" fill="none" stroke="currentColor" strokeWidth="1.5">
-                <circle cx="100" cy="50" r="25" />
-                <path d="M 75 85 Q 75 100 100 100 Q 125 100 125 85" strokeLinecap="round" />
-                <path d="M 75 100 L 60 150 M 125 100 L 140 150" />
-                <path d="M 70 150 L 65 180 M 130 150 L 135 180" />
-                <path d="M 75 110 L 50 130 M 125 110 L 150 130" />
-              </svg>
+              {/* ✅ IMAGE ADDED (SVG removed) */}
+              <img
+                src="images/profile.jpg"
+                alt="Anjali Gupta"
+                className="w-full h-full object-cover rounded-3xl"
+              />
 
             </div>
           </div>
